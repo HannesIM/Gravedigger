@@ -22,6 +22,7 @@ class Game():
 
         self.screen = pg.display.set_mode((self.WIDTH, self.HEIGHT))
         self.comic_sans50 = pg.font.SysFont("Comic Sans MS", 50)   
+        self.times75 = pg.font.SysFont("Times New Roman", 75)  
         
         self.FPS = 120
         self.clock = pg.time.Clock()
@@ -33,7 +34,9 @@ class Game():
         self.hurt_sound.set_volume(0.4)
 
         self.start_screen_ambient = pg.mixer.Sound("windy-forest-ambience-01.wav")
-        self.start_screen_ambient.set_volume(0.4)
+        self.start_screen_ambient.set_volume(0.3)
+
+        pg.mixer.set_num_channels(10)
 
         self.start_screen()
 
@@ -41,12 +44,15 @@ class Game():
     def start_screen(self):
         pg.mixer.music.stop()
         pg.mixer.music.load("start_screen_music.mp3")
-        pg.mixer.music.play(-1)
-        pg.mixer.Sound.play(self.start_screen_ambient)
+        pg.mixer.music.play(1)
+        self.start_screen_ambient.play(10)
+        #pg.mixer.Channel(0).play(pg.mixer.music("start_screen_music.mp3"))
+        #pg.mixer.music.load("windy-forest-ambience-01.wav")
+        #pg.mixer.Channel(1).play(pg.mixer.music("windy-forest-ambience-01.wav"))
         self.game_start = True
         while self.game_start:
             self.clock.tick(self.FPS)
-            self.start_game_text = self.comic_sans50.render("Click SPACE to start", False, (self.BLACK))
+            self.start_game_text = self.times75.render("Click SPACE to start", False, (self.BLACK))
             for event in pg.event.get():
                  if event.type == pg.QUIT:
                     self.game_over = False
@@ -58,7 +64,7 @@ class Game():
                         pg.mixer.Sound.stop(self.start_screen_ambient)
 
             self.screen.blit(birth_screen, (-400,-300))
-            self.screen.blit(self.start_game_text,(260,650))  # tegner tekst på skjerm. 
+            self.screen.blit(self.start_game_text,(195,650))  # tegner tekst på skjerm. 
             
         
             pg.display.update()
@@ -73,6 +79,7 @@ class Game():
         pg.mixer.music.stop()
         pg.mixer.music.load('bg_music.mp3') 
         pg.mixer.music.play(-1)
+        pg.mixer.music.set_volume(0.5)
 
         self.all_sprites = pg.sprite.Group()
         self.enemy_group = pg.sprite.Group()
