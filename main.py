@@ -1,8 +1,10 @@
 import pygame as pg
-
 from random import randint
+from sprites import *
 
 pg.init()
+
+bg = pg.image.load("TilesetGraveyard.png")
 
 WHITE = (255,255,255)
 BLACK = (0,0,0)
@@ -12,25 +14,39 @@ BLUE = (150,222,209)
 COOLGREEN = (175,225,175)
 RANDOM = (153,223,67)
 
+WIDTH = 1000
+HEIGHT = 1000
+
 box_color = RANDOM
 
-screen = pg.display.set_mode((900,900))
+all_sprites = pg.sprite.Group()
+enemy_group = pg.sprite.Group()
+enemy_group_spawn_ghost = pg.sprite.Group()
+enemy_group_spawn_skeleton = pg.sprite.Group()
 
-fps_counter = 0
+digger = Player()
+skeleton = Enemy()
+ghost = Enemy2()
+all_sprites.add(digger)
 
-x = 50
-y = 50
+selfrand = randint(1,5)
 
-speed = 4
 
-direction_x = 1
-direction_y = 1
+
+
+screen = pg.display.set_mode((WIDTH,HEIGHT))
+
 
 FPS = 120
 clock = pg.time.Clock()
+liv = 100
 
-character = pg.image.load("lIdle_0.png")
-character = pg.transform.scale(character, (100,100))
+comic_sans30 = pg.font.SysFont("Comic Sans MS", 30)
+print(digger.liv)
+
+text_player_hp = comic_sans30.render("HP: " + str(digger.liv), False, (DARKRED))
+
+
 
 playing = True
 while playing: #gameloop
@@ -39,49 +55,41 @@ while playing: #gameloop
         if event.type == pg.QUIT:
             playing = False
     screen.fill(COOLGREEN)
-    
+    screen.blit(bg, (0, 0))
 
-    #move box
-    keys = pg.key.get_pressed()
+    all_sprites.update() # kjør update funskjon til alle sprites i all_sprites
+    hits = pg.sprite.spritecollide(digger, enemy_group, True)
+    if hits:
+        digger.liv -=10
+        print("LIV: ", digger.liv)
+        text_player_hp = comic_sans30.render("HP: " + str(digger.liv), False, (DARKRED))
+        if digger.liv <= 0:
+            digger.kill()
+            digger = Player()
+            all_sprites.add(digger)
+            
 
-    if keys[pg.K_w]:
-        y -= speed
-    if keys[pg.K_a]:
-        x -= speed
-    if keys[pg.K_s]:
-        y += speed
-    if keys[pg.K_d]:
-        x += speed
-    
-    # skjekk hvis utfor skjerm
 
-    
+    #lag nye fiender
+    if len(enemy_group_spawn_skeleton) < 3:
+        skeleton = Enemy()
+        all_sprites.add(skeleton)
+        enemy_group.add(skeleton)
+        enemy_group_spawn_skeleton.add(skeleton)
 
-    if x > 820:
-        x = 820
-        #box_color= (randint(0,255),randint(0,255),randint(0,255))
-    
-    if x < -25:
-        x = -25
-        #box_color= (randint(0,255),randint(0,255),randint(0,255))
-    
-    if y > 800:
-        y = 800
-        #box_color= (randint(0,255),randint(0,255),randint(0,255))
-    
-    if y < -30:
-        y = -30
-        #box_color= (randint(0,255),randint(0,255),randint(0,255))
+    if len(enemy_group_spawn_ghost) < 3:
+        ghost = Enemy2()
+        all_sprites.add(ghost)
+        enemy_group.add(ghost)
+        enemy_group_spawn_ghost.add(ghost)
 
 
     
-
-
-    #box = pg.Rect(x,y, 50,50)
-    #pg.draw.rect(screen, box_color, box)
-
-    screen.blit(character, (x, y,))
     
+
+    all_sprites.draw(screen) # tegner alle sprites i gruppen all_sprites til screen
+    
+    screen.blit(text_player_hp, (10, 10))
 
    
     
