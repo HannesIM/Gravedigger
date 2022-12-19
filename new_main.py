@@ -35,6 +35,7 @@ class Game():
 
         self.start_screen_ambient = pg.mixer.Sound("windy-forest-ambience-01.wav")
         self.start_screen_ambient.set_volume(0.3)
+        self.start_screen_ambient.fadeout(100)
 
         pg.mixer.set_num_channels(10)
 
@@ -44,8 +45,8 @@ class Game():
     def start_screen(self):
         pg.mixer.music.stop()
         pg.mixer.music.load("start_screen_music.mp3")
-        pg.mixer.music.play(1)
-        self.start_screen_ambient.play(10)
+        pg.mixer.music.play(-1)
+        self.start_screen_ambient.play(-1)
         #pg.mixer.Channel(0).play(pg.mixer.music("start_screen_music.mp3"))
         #pg.mixer.music.load("windy-forest-ambience-01.wav")
         #pg.mixer.Channel(1).play(pg.mixer.music("windy-forest-ambience-01.wav"))
@@ -63,8 +64,8 @@ class Game():
                         self.game_start = False
                         pg.mixer.Sound.stop(self.start_screen_ambient)
 
-            self.screen.blit(birth_screen, (-400,-300))
-            self.screen.blit(self.start_game_text,(195,650))  # tegner tekst på skjerm. 
+            self.screen.blit(birth_screen, (-400,-260))
+            self.screen.blit(self.start_game_text,(195,675))  # tegner tekst på skjerm. 
             
         
             pg.display.update()
